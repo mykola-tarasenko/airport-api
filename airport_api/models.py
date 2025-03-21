@@ -68,18 +68,9 @@ class Route(models.Model):
             ValidationError,
         )
 
-    def save(
-        self,
-        *args,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
-    ):
+    def save(self, *args, **kwargs):
         self.full_clean()
-        return super(Route, self).save(
-            force_insert, force_update, using, update_fields
-        )
+        return super(Route, self).save(*args, **kwargs)
 
     @property
     def name(self):
@@ -144,3 +135,44 @@ class CrewMember(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.role.name})"
+
+
+class Flight(models.Model):
+    STATUS_CHOICES = [
+        ("0", "Scheduled"),
+        ("1", "In air"),
+        ("2", "Landed"),
+        ("3", "Canceled"),
+    ]
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.CASCADE,
+        related_name="flights",
+    )
+    airplane = models.ForeignKey(
+        Airplane,
+        on_delete=models.CASCADE,
+        related_name="flights",
+    )
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+    status = models.PositiveSmallIntegerField(
+        choices=STATUS_CHOICES,
+        default=0,
+    )
+    crew = models.ManyToManyField(CrewMember, related_name="flights")
+
+    class Meta:
+        ordering = ("departure_time", "status")
+
+    def clean(self):
+        if self.departure_time > self.arrival_time:
+            raise ValidationError("Departure can`t be later than arrival.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(Flight, self).save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return (f"Flight {self.route}: "
+                f"{self.departure_time} - {self.arrival_time}")
