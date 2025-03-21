@@ -1,3 +1,5 @@
+from dataclasses import field
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -12,6 +14,9 @@ class City(models.Model):
 
     class Meta:
         verbose_name_plural = "cities"
+        indexes = [
+            models.Index(fields=["name", "country"])
+        ]
 
     def __str__(self):
         return self.name
@@ -27,6 +32,9 @@ class Airport(models.Model):
 
     class Meta:
         ordering = ("city__country", "city__name", "name")
+        indexes = [
+            models.Index(fields=["name"])
+        ]
 
     def __str__(self):
         return f"{self.city.name} - {self.name}"
