@@ -94,8 +94,8 @@ class AirplaneType(models.Model):
 
 class Airplane(models.Model):
     model_name = models.CharField(max_length=255)
-    rows = models.IntegerField(MinValueValidator(1))
-    seats_in_row = models.IntegerField(MinValueValidator(1))
+    rows = models.IntegerField(validators=[MinValueValidator(1)])
+    seats_in_row = models.IntegerField(validators=[MinValueValidator(1)])
     type = models.ForeignKey(
         AirplaneType,
         on_delete=models.CASCADE,
