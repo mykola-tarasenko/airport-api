@@ -113,6 +113,10 @@ class Airplane(models.Model):
     class Meta:
         ordering = ("type__name", "model_name")
 
+    @property
+    def capacity(self):
+        return self.rows * self.seats_in_row
+
     def __str__(self):
         return self.model_name
 
