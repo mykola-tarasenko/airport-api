@@ -3,6 +3,8 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
+from core import settings
+
 
 class City(models.Model):
     name = models.CharField(max_length=255)
@@ -176,3 +178,18 @@ class Flight(models.Model):
     def __str__(self) -> str:
         return (f"Flight {self.route}: "
                 f"{self.departure_time} - {self.arrival_time}")
+
+
+class Order(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders",
+    )
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"Order: {self.created_at}"
