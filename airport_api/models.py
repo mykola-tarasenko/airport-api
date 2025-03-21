@@ -212,12 +212,12 @@ class Ticket(models.Model):
     )
 
     @staticmethod
-    def validate_row_and_seat(flight, row, seat, error_to_raise):
-        for ticket_attr_value, ticket_attr_name, flight_attr_name in [
+    def validate_row_and_seat(airplane, row, seat, error_to_raise):
+        for ticket_attr_value, ticket_attr_name, airplane_attr_name in [
             (row, "row", "rows"),
             (seat, "seat", "seats_in_row"),
         ]:
-            count_attrs = getattr(flight, flight_attr_name)
+            count_attrs = getattr(airplane, airplane_attr_name)
             if not (1 <= ticket_attr_value <= count_attrs):
                 raise error_to_raise(
                     {
@@ -229,7 +229,7 @@ class Ticket(models.Model):
 
     def clean(self):
         Ticket.validate_row_and_seat(
-            self.flight,
+            self.flight.airplane,
             self.row,
             self.seat,
             ValidationError,
