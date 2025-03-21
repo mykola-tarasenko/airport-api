@@ -61,7 +61,7 @@ class Route(models.Model):
         if source == destination:
             raise error_to_raise("The source can`t equal destination.")
 
-    def clean(self) -> None:
+    def clean(self):
         Route.validate_source_and_destination(
             self.source,
             self.destination,
@@ -97,3 +97,20 @@ class AirplaneType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Airplane(models.Model):
+    model_name = models.CharField(max_length=255)
+    rows = models.IntegerField(MinValueValidator(1))
+    seats_in_row = models.IntegerField(MinValueValidator(1))
+    type = models.ForeignKey(
+        AirplaneType,
+        on_delete=models.CASCADE,
+        related_name="airplanes",
+    )
+
+    class Meta:
+        ordering = ("type__name", "model_name")
+
+    def __str__(self):
+        return self.model_name
