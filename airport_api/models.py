@@ -124,3 +124,23 @@ class Role(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CrewMember(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    role = models.ForeignKey(
+        Role,
+        on_delete=models.CASCADE,
+        related_name="crew_members",
+    )
+
+    class Meta:
+        ordering = ("role__name", "first_name", "last_name")
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def __str__(self):
+        return f"{self.full_name} ({self.role.name})"
