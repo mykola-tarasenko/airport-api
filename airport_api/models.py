@@ -15,6 +15,12 @@ class City(models.Model):
 
     class Meta:
         verbose_name_plural = "cities"
+        constraints = (
+            UniqueConstraint(
+                fields=["name", "country"],
+                name="unique_city",
+            ),
+        )
         indexes = [
             models.Index(fields=["name", "country"])
         ]
