@@ -153,10 +153,10 @@ class CrewMember(models.Model):
 
 class Flight(models.Model):
     STATUS_CHOICES = [
-        ("0", "Scheduled"),
-        ("1", "In air"),
-        ("2", "Landed"),
-        ("3", "Canceled"),
+        (0, "Scheduled"),
+        (1, "In air"),
+        (2, "Landed"),
+        (3, "Canceled"),
     ]
     route = models.ForeignKey(
         Route,
