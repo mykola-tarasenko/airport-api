@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
+from airport_api.validators import validate_flight_number_format
 from core import settings
 
 
@@ -158,6 +159,11 @@ class Flight(models.Model):
         (2, "Landed"),
         (3, "Canceled"),
     ]
+    flight_number = models.CharField(
+        max_length=7,
+        validators=[validate_flight_number_format],
+        unique=True,
+    )
     route = models.ForeignKey(
         Route,
         on_delete=models.CASCADE,
@@ -187,9 +193,8 @@ class Flight(models.Model):
         self.full_clean()
         return super(Flight, self).save(*args, **kwargs)
 
-    def __str__(self) -> str:
-        return (f"Flight {self.route}: "
-                f"{self.departure_time} - {self.arrival_time}")
+    def __str__(self):
+        return f"Flight {self.flight_number}"
 
 
 class Order(models.Model):
