@@ -2,13 +2,16 @@ from rest_framework import viewsets
 
 from airport_api.models import (
     City,
-    Airport,
+    Airport, Route,
 )
 from serializers import (
     CitySerializer,
     AirportSerializer,
     AirportListSerializer,
     AirportRetrieveSerializer,
+    RouteSerializer,
+    RouteListSerializer,
+    RouteRetrieveSerializer,
 )
 
 
@@ -26,4 +29,17 @@ class AirportViewSet(viewsets.ModelViewSet):
             return AirportListSerializer
         if self.action == "retrieve":
             return AirportRetrieveSerializer
+        return self.serializer_class
+
+
+class RouteViewSet(viewsets.ModelViewSet):
+    queryset = Route.objects.all()
+    serializer_class = RouteSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return RouteListSerializer
+        if self.action == "retrieve":
+            return RouteRetrieveSerializer
+
         return self.serializer_class
