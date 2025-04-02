@@ -18,7 +18,11 @@ from serializers import (
 )
 
 
-class CityViewSet(viewsets.ModelViewSet):
+class CityViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = City.objects.all()
     serializer_class = CitySerializer
 
