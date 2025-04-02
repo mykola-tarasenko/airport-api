@@ -1,8 +1,10 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 
 from airport_api.models import (
     City,
-    Airport, Route,
+    Airport,
+    Route,
+    AirplaneType,
 )
 from serializers import (
     CitySerializer,
@@ -12,6 +14,7 @@ from serializers import (
     RouteSerializer,
     RouteListSerializer,
     RouteRetrieveSerializer,
+    AirplaneTypeSerializer,
 )
 
 
@@ -43,3 +46,12 @@ class RouteViewSet(viewsets.ModelViewSet):
             return RouteRetrieveSerializer
 
         return self.serializer_class
+
+
+class AirplaneTypeViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = AirplaneType.objects.all()
+    serializer_class = AirplaneTypeSerializer

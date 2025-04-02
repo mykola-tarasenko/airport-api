@@ -4,6 +4,7 @@ from airport_api.models import (
     City,
     Airport,
     Route,
+    AirplaneType,
 )
 
 
@@ -57,3 +58,9 @@ class RouteListSerializer(RouteSerializer):
 class RouteRetrieveSerializer(RouteSerializer):
     source = AirportRetrieveSerializer()
     destination = AirportRetrieveSerializer()
+
+
+class AirplaneTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AirplaneType
+        fields = ("id", "name")
