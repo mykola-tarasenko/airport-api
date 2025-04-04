@@ -8,6 +8,7 @@ from airport_api.views import (
     AirplaneTypeViewSet,
     AirplaneViewSet,
     RoleViewSet,
+    CrewMemberViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -17,6 +18,7 @@ router.register("routes", RouteViewSet)
 router.register("airplane_types", AirplaneTypeViewSet)
 router.register("airplanes", AirplaneViewSet)
 router.register("roles", RoleViewSet)
+router.register("crew_members", CrewMemberViewSet)
 
 urlpatterns = [path("", include(router.urls))]
 

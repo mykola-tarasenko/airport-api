@@ -7,6 +7,7 @@ from airport_api.models import (
     AirplaneType,
     Airplane,
     Role,
+    CrewMember,
 )
 
 
@@ -90,3 +91,16 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ("id", "name")
+
+
+class CrewMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CrewMember
+        fields = ("id", "first_name", "last_name", "role")
+
+
+class CrewMemberListSerializer(CrewMemberSerializer):
+    role = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+class CrewMemberRetrieveSerializer(CrewMemberSerializer):
+    role = RoleSerializer()
