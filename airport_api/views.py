@@ -6,6 +6,7 @@ from airport_api.models import (
     Route,
     AirplaneType,
     Airplane,
+    Role,
 )
 from serializers import (
     CitySerializer,
@@ -16,7 +17,10 @@ from serializers import (
     RouteListSerializer,
     RouteRetrieveSerializer,
     AirplaneTypeSerializer,
-    AirplaneSerializer, AirplaneListSerializer, AirplaneRetrieveSerializer,
+    AirplaneSerializer,
+    AirplaneListSerializer,
+    AirplaneRetrieveSerializer,
+    RoleSerializer,
 )
 
 
@@ -73,3 +77,12 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return AirplaneRetrieveSerializer
         return self.serializer_class
+
+
+class RoleViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer

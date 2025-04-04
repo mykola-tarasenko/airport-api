@@ -6,6 +6,7 @@ from airport_api.models import (
     Route,
     AirplaneType,
     Airplane,
+    Role,
 )
 
 
@@ -83,3 +84,9 @@ class AirplaneRetrieveSerializer(AirplaneSerializer):
     class Meta:
         model = Airplane
         fields = ("id", "model_name", "type", "capacity", "rows", "seats_in_row")
+
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ("id", "name")
