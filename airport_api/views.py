@@ -8,6 +8,7 @@ from airport_api.models import (
     Airplane,
     Role,
     CrewMember,
+    Flight,
 )
 from serializers import (
     CitySerializer,
@@ -25,6 +26,9 @@ from serializers import (
     CrewMemberSerializer,
     CrewMemberListSerializer,
     CrewMemberRetrieveSerializer,
+    FlightSerializer,
+    FlightListSerializer,
+    FlightRetrieveSerializer,
 )
 
 
@@ -101,5 +105,18 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
             return CrewMemberListSerializer
         if self.action == "retrieve":
             return CrewMemberRetrieveSerializer
+
+        return self.serializer_class
+
+
+class FlightViewSet(viewsets.ModelViewSet):
+    queryset = Flight.objects.all()
+    serializer_class = FlightSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+        if self.action == "retrieve":
+            return FlightRetrieveSerializer
 
         return self.serializer_class

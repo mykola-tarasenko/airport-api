@@ -8,6 +8,7 @@ from airport_api.models import (
     Airplane,
     Role,
     CrewMember,
+    Flight,
 )
 
 
@@ -104,3 +105,43 @@ class CrewMemberListSerializer(CrewMemberSerializer):
 
 class CrewMemberRetrieveSerializer(CrewMemberSerializer):
     role = RoleSerializer()
+
+
+class FlightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "flight_number",
+            "route",
+            "airplane",
+            "departure_time",
+            "arrival_time",
+            "status",
+            "crew",
+        )
+
+
+class FlightListSerializer(FlightSerializer):
+    route = serializers.SlugRelatedField(read_only=True, slug_field="name")
+    airplane = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field="model_name",
+    )
+    departure_time = serializers.DateTimeField(format="%d %b %Y, %H:%M")
+    arrival_time = serializers.DateTimeField(format="%d %b %Y, %H:%M")
+    status = serializers.CharField(read_only=True, source="get_status_display")
+    crew = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="full_name",
+    )
+
+
+class FlightRetrieveSerializer(FlightSerializer):
+    route = RouteListSerializer()
+    airplane = AirplaneListSerializer()
+    departure_time = serializers.DateTimeField(format="%d %b %Y, %H:%M")
+    arrival_time = serializers.DateTimeField(format="%d %b %Y, %H:%M")
+    status = serializers.CharField(read_only=True, source="get_status_display")
+    crew = CrewMemberListSerializer(many=True)
