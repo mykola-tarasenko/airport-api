@@ -248,3 +248,12 @@ class TicketRetrieveSerializer(TicketSerializer):
             "departure_time",
             "arrival_time",
         )
+
+
+class OrderListSerializer(OrderSerializer):
+    created_at = serializers.DateTimeField(format="%d %b %Y, %H:%M")
+    tickets = TicketListSerializer(many=True, read_only=True)
+
+
+class OrderRetrieveSerializer(OrderListSerializer):
+    tickets = TicketRetrieveSerializer(many=True, read_only=True)
