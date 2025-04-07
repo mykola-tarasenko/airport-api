@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
+from django.db import transaction
 
 from airport_api.models import (
     City,
@@ -9,6 +11,8 @@ from airport_api.models import (
     Role,
     CrewMember,
     Flight,
+    Ticket,
+    Order,
 )
 
 
@@ -47,6 +51,7 @@ class RouteSerializer(serializers.ModelSerializer):
             serializers.ValidationError,
         )
         return attrs
+
 
 class RouteListSerializer(RouteSerializer):
     source = serializers.SerializerMethodField()
@@ -103,6 +108,7 @@ class CrewMemberSerializer(serializers.ModelSerializer):
 class CrewMemberListSerializer(CrewMemberSerializer):
     role = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
+
 class CrewMemberRetrieveSerializer(CrewMemberSerializer):
     role = RoleSerializer()
 
@@ -145,3 +151,43 @@ class FlightRetrieveSerializer(FlightSerializer):
     arrival_time = serializers.DateTimeField(format="%d %b %Y, %H:%M")
     status = serializers.CharField(read_only=True, source="get_status_display")
     crew = CrewMemberListSerializer(many=True)
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "row",
+            "seat",
+            "passenger_first_name",
+            "passenger_last_name",
+            "flight",
+        )
+
+    def validate(self, attrs):
+        Ticket.validate_row_and_seat(
+            attrs["flight"].airplane,
+            attrs["row"],
+            attrs["seat"],
+            ValidationError,
+        )
+        return attrs
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(many=True, allow_empty=False)
+
+    class Meta:
+        model = Order
+        fields = ("id","created_at", "tickets")
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            tickets_data = validated_data.pop("tickets", None)
+            order = Order.objects.create(**validated_data)
+            Ticket.objects.bulk_create([
+                Ticket(order=order, **ticket)
+                for ticket in tickets_data
+            ])
+            return order
