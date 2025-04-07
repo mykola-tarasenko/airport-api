@@ -9,6 +9,7 @@ from airport_api.models import (
     Role,
     CrewMember,
     Flight,
+    Order,
 )
 from serializers import (
     CitySerializer,
@@ -29,6 +30,9 @@ from serializers import (
     FlightSerializer,
     FlightListSerializer,
     FlightRetrieveSerializer,
+    OrderSerializer,
+    OrderListSerializer,
+    OrderRetrieveSerializer,
 )
 
 
@@ -120,3 +124,35 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightRetrieveSerializer
 
         return self.serializer_class
+
+
+class OrderViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+        if self.action == "retrieve":
+            return OrderRetrieveSerializer
+
+        return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.prefetch_related(
+                "tickets__flight__route__source__city",
+                "tickets__flight__route__destination__city",
+            )
+
+        return queryset
