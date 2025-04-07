@@ -191,3 +191,60 @@ class OrderSerializer(serializers.ModelSerializer):
                 for ticket in tickets_data
             ])
             return order
+
+
+class TicketListSerializer(TicketSerializer):
+    trip = serializers.CharField(
+        source="flight.route.name",
+        read_only=True,
+    )
+    passenger = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "passenger",
+            "trip",
+        )
+
+    def get_passenger(self, obj):
+        return f"{obj.passenger_first_name} {obj.passenger_last_name}"
+
+
+class TicketRetrieveSerializer(TicketSerializer):
+    flight = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field="flight_number",
+    )
+    source = serializers.CharField(
+        read_only=True,
+        source="flight.route.source",
+    )
+    destination = serializers.CharField(
+        read_only=True,
+        source="flight.route.destination",
+    )
+    departure_time = serializers.DateTimeField(
+        format="%d %b %Y, %H:%M",
+        source="flight.departure_time",
+    )
+    arrival_time = serializers.DateTimeField(
+        format="%d %b %Y, %H:%M",
+        source="flight.arrival_time",
+    )
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "row",
+            "seat",
+            "passenger_first_name",
+            "passenger_last_name",
+            "flight",
+            "source",
+            "destination",
+            "departure_time",
+            "arrival_time",
+        )
