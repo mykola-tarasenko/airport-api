@@ -11,7 +11,7 @@ from airport_api.models import (
     Flight,
     Order,
 )
-from serializers import (
+from airport_api.serializers import (
     CitySerializer,
     AirportSerializer,
     AirportListSerializer,
