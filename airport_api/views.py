@@ -46,7 +46,7 @@ class CityViewSet(
 
 
 class AirportViewSet(viewsets.ModelViewSet):
-    queryset = Airport.objects.all()
+    queryset = Airport.objects.prefetch_related("city")
     serializer_class = AirportSerializer
 
     def get_serializer_class(self):
