@@ -101,7 +101,7 @@ class RoleViewSet(
 
 
 class CrewMemberViewSet(viewsets.ModelViewSet):
-    queryset = CrewMember.objects.all()
+    queryset = CrewMember.objects.select_related("role")
     serializer_class = CrewMemberSerializer
 
     def get_serializer_class(self):
