@@ -58,7 +58,7 @@ class AirportViewSet(viewsets.ModelViewSet):
 
 
 class RouteViewSet(viewsets.ModelViewSet):
-    queryset = Route.objects.all()
+    queryset = Route.objects.select_related("source__city", "destination__city")
     serializer_class = RouteSerializer
 
     def get_serializer_class(self):

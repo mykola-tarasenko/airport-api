@@ -40,6 +40,13 @@ class AirportRetrieveSerializer(AirportSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
+    source = serializers.PrimaryKeyRelatedField(
+        queryset=Airport.objects.select_related("city")
+    )
+    destination = serializers.PrimaryKeyRelatedField(
+        queryset=Airport.objects.select_related("city")
+    )
+
     class Meta:
         model = Route
         fields = ("id", "source", "destination", "distance")
