@@ -80,7 +80,7 @@ class AirplaneTypeViewSet(
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
-    queryset = Airplane.objects.all()
+    queryset = Airplane.objects.select_related("type")
     serializer_class = AirplaneSerializer
 
     def get_serializer_class(self):
