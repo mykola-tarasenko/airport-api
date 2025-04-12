@@ -1,5 +1,5 @@
 from rest_framework import viewsets, mixins
-
+from django.db.models import Prefetch
 from airport_api.models import (
     City,
     Airport,
@@ -9,7 +9,7 @@ from airport_api.models import (
     Role,
     CrewMember,
     Flight,
-    Order,
+    Order, Ticket,
 )
 from airport_api.serializers import (
     CitySerializer,
@@ -154,9 +154,14 @@ class OrderViewSet(
         queryset = self.queryset.filter(user=self.request.user)
 
         if self.action in ("list", "retrieve"):
-            queryset = queryset.prefetch_related(
-                "tickets__flight__route__source__city",
-                "tickets__flight__route__destination__city",
+            tickets_qs = Ticket.objects.select_related(
+                "flight__route__source__city",
+                "flight__route__destination__city",
             )
+
+            queryset = queryset.prefetch_related(Prefetch(
+                "tickets",
+                queryset=tickets_qs,
+            ))
 
         return queryset
