@@ -114,7 +114,11 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.select_related(
+        "route__destination__city",
+        "route__source__city",
+        "airplane",
+    ).prefetch_related("crew__role")
     serializer_class = FlightSerializer
 
     def get_serializer_class(self):

@@ -121,6 +121,17 @@ class CrewMemberRetrieveSerializer(CrewMemberSerializer):
 
 
 class FlightSerializer(serializers.ModelSerializer):
+    route = serializers.PrimaryKeyRelatedField(
+        queryset=Route.objects.select_related(
+            "source__city",
+            "destination__city",
+        )
+    )
+    crew = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=CrewMember.objects.select_related("role"),
+    )
+
     class Meta:
         model = Flight
         fields = (
