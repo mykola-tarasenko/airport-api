@@ -32,7 +32,7 @@ from airport_api.serializers import (
     FlightRetrieveSerializer,
     OrderSerializer,
     OrderListSerializer,
-    OrderRetrieveSerializer,
+    OrderRetrieveSerializer, FlightFilterSerializer,
 )
 
 
@@ -184,21 +184,60 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = (
-        Flight.objects
-        .select_related(
-            "route__destination__city",
-            "route__source__city",
-            "airplane",
-        )
-        .prefetch_related("crew__role")
-        .annotate(
-            available_seats=(
-                F("airplane__seats_in_row") * F("airplane__rows")
-                - Count("tickets")
-            )
-        ))
+    queryset = Flight.objects.all()
     serializer_class = FlightSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        filter_serializer = FlightFilterSerializer(
+            data=self.request.query_params
+        )
+        filter_serializer.is_valid(raise_exception=True)
+        filters = filter_serializer.validated_data
+
+        if "departure_time_after" in filters:
+            queryset = queryset.filter(
+                departure_time__gte=filters["departure_time_after"]
+            )
+        if "departure_time_before" in filters:
+            queryset = queryset.filter(
+                departure_time__lte=filters["departure_time_before"]
+            )
+        if "arrival_time_after" in filters:
+            queryset = queryset.filter(
+                arrival_time__gte=filters["arrival_time_after"]
+            )
+        if "arrival_time_before" in filters:
+            queryset = queryset.filter(
+                arrival_time__lte=filters["arrival_time_before"]
+            )
+
+        if "source_city" in filters:
+            queryset = queryset.filter(
+                route__source__city__name=filters["source_city"]
+            )
+        if "destination_city" in filters:
+            queryset = queryset.filter(
+                route__destination__city__name=filters["destination_city"]
+            )
+
+        if self.action in ("list", "retrieve"):
+            queryset = (queryset
+            .select_related(
+                "route__destination__city",
+                "route__source__city",
+                "airplane",
+            )
+            .prefetch_related("crew__role")
+            .annotate(
+                available_seats=(
+                        F("airplane__seats_in_row") * F("airplane__rows")
+                        - Count("tickets")
+                )
+            ))
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
