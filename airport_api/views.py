@@ -114,7 +114,7 @@ class AirplaneTypeViewSet(
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
-    queryset = Airplane.objects.select_related("airplane_type")
+    queryset = Airplane.objects.all()
     serializer_class = AirplaneSerializer
 
     def get_serializer_class(self):
@@ -123,6 +123,24 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return AirplaneRetrieveSerializer
         return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        model_name = self.request.query_params.get("model_name")
+        if model_name:
+            queryset = queryset.filter(model_name__icontains=model_name)
+
+        airplane_type = self.request.query_params.get("airplane_type")
+        if airplane_type:
+            queryset = queryset.filter(
+                airplane_type__name__icontains=airplane_type
+            )
+
+        if self.action in ("list", "retrieve"):
+            return queryset.select_related("airplane_type")
+
+        return queryset
 
 
 class RoleViewSet(
