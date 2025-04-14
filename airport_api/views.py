@@ -70,7 +70,7 @@ class AirportViewSet(viewsets.ModelViewSet):
 
 
 class RouteViewSet(viewsets.ModelViewSet):
-    queryset = Route.objects.select_related("source__city", "destination__city")
+    queryset = Route.objects.all()
     serializer_class = RouteSerializer
 
     def get_serializer_class(self):
@@ -80,6 +80,28 @@ class RouteViewSet(viewsets.ModelViewSet):
             return RouteRetrieveSerializer
 
         return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        source = self.request.query_params.get("source")
+        if source:
+            queryset = queryset.filter(
+                source__city__name__icontains=source
+            )
+
+        destination = self.request.query_params.get("destination")
+        if destination:
+            queryset = queryset.filter(
+                destination__city__name__icontains=destination
+            )
+
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.select_related(
+                "source__city", "destination__city"
+            )
+
+        return queryset
 
 
 class AirplaneTypeViewSet(
