@@ -1,5 +1,5 @@
 from rest_framework import viewsets, mixins
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from airport_api.models import (
     City,
     Airport,
@@ -163,6 +163,24 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
             return CrewMemberRetrieveSerializer
 
         return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        role = self.request.query_params.get("role")
+        if role:
+            queryset = queryset.filter(role__name__icontains=role)
+
+        name = self.request.query_params.get("name")
+        if name:
+            queryset = queryset.filter(
+                Q(first_name__icontains=name) | Q(last_name__icontains=name)
+            )
+
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.select_related("role")
+
+        return queryset
 
 
 class FlightViewSet(viewsets.ModelViewSet):
