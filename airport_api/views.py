@@ -1,5 +1,5 @@
 from rest_framework import viewsets, mixins
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, F, Sum, Count
 from airport_api.models import (
     City,
     Airport,
@@ -184,11 +184,20 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.select_related(
-        "route__destination__city",
-        "route__source__city",
-        "airplane",
-    ).prefetch_related("crew__role")
+    queryset = (
+        Flight.objects
+        .select_related(
+            "route__destination__city",
+            "route__source__city",
+            "airplane",
+        )
+        .prefetch_related("crew__role")
+        .annotate(
+            available_seats=(
+                F("airplane__seats_in_row") * F("airplane__rows")
+                - Count("tickets")
+            )
+        ))
     serializer_class = FlightSerializer
 
     def get_serializer_class(self):

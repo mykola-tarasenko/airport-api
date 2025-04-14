@@ -121,6 +121,7 @@ class CrewMemberRetrieveSerializer(CrewMemberSerializer):
 
 
 class FlightSerializer(serializers.ModelSerializer):
+    available_seats = serializers.IntegerField(read_only=True)
     route = serializers.PrimaryKeyRelatedField(
         queryset=Route.objects.select_related(
             "source__city",
@@ -137,6 +138,7 @@ class FlightSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "flight_number",
+            "available_seats",
             "route",
             "airplane",
             "departure_time",
