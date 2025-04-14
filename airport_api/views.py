@@ -46,7 +46,7 @@ class CityViewSet(
 
 
 class AirportViewSet(viewsets.ModelViewSet):
-    queryset = Airport.objects.prefetch_related("city")
+    queryset = Airport.objects.all()
     serializer_class = AirportSerializer
 
     def get_serializer_class(self):
@@ -55,6 +55,18 @@ class AirportViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return AirportRetrieveSerializer
         return self.serializer_class
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        country = self.request.query_params.get("country")
+        if country:
+            queryset = queryset.filter(city__country__icontains=country)
+
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.select_related("city")
+
+        return queryset
 
 
 class RouteViewSet(viewsets.ModelViewSet):
