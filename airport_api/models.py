@@ -111,14 +111,14 @@ class Airplane(models.Model):
     model_name = models.CharField(max_length=255)
     rows = models.IntegerField(validators=[MinValueValidator(1)])
     seats_in_row = models.IntegerField(validators=[MinValueValidator(1)])
-    type = models.ForeignKey(
+    airplane_type = models.ForeignKey(
         AirplaneType,
         on_delete=models.CASCADE,
         related_name="airplanes",
     )
 
     class Meta:
-        ordering = ("type__name", "model_name")
+        ordering = ("airplane_type__name", "model_name")
 
     @property
     def capacity(self):

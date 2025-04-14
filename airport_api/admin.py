@@ -46,8 +46,8 @@ class AirplaneTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Airplane)
 class AirplaneAdmin(admin.ModelAdmin):
-    list_display = ("model_name", "type", "capacity")
-    search_fields = ("model_name", "type__name")
+    list_display = ("model_name", "airplane_type", "capacity")
+    search_fields = ("model_name", "airplane_type__name")
 
 
 @admin.register(Role)
