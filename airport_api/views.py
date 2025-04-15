@@ -84,16 +84,28 @@ class RouteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        source = self.request.query_params.get("source")
-        if source:
+        source_name = self.request.query_params.get("source_name")
+        if source_name:
             queryset = queryset.filter(
-                source__city__name__icontains=source
+                destination__city__name__icontains=source_name
             )
 
-        destination = self.request.query_params.get("destination")
-        if destination:
+        source_id = self.request.query_params.get("source_id")
+        if source_id:
             queryset = queryset.filter(
-                destination__city__name__icontains=destination
+                destination__city__id=source_id
+            )
+
+        destination_name = self.request.query_params.get("destination_name")
+        if destination_name:
+            queryset = queryset.filter(
+                destination__city__name__icontains=destination_name
+            )
+
+        destination_id = self.request.query_params.get("destination_id")
+        if destination_id:
+            queryset = queryset.filter(
+                destination__city__id=destination_id
             )
 
         if self.action in ("list", "retrieve"):
