@@ -1,5 +1,5 @@
 from rest_framework import viewsets, mixins
-from django.db.models import Prefetch, Q, F, Sum, Count
+from django.db.models import Prefetch, Q, F, Count
 from airport_api.models import (
     City,
     Airport,
@@ -10,6 +10,10 @@ from airport_api.models import (
     CrewMember,
     Flight,
     Order, Ticket,
+)
+from airport_api.pagination import (
+    SmallResultSetPagination,
+    BigResultSetPagination,
 )
 from airport_api.serializers import (
     CitySerializer,
@@ -32,7 +36,8 @@ from airport_api.serializers import (
     FlightRetrieveSerializer,
     OrderSerializer,
     OrderListSerializer,
-    OrderRetrieveSerializer, FlightFilterSerializer,
+    OrderRetrieveSerializer,
+    FlightFilterSerializer,
 )
 
 
@@ -43,6 +48,7 @@ class CityViewSet(
 ):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+    pagination_class = BigResultSetPagination
 
 
 class AirportViewSet(viewsets.ModelViewSet):
@@ -162,6 +168,7 @@ class RoleViewSet(
 ):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
+    pagination_class = BigResultSetPagination
 
 
 class CrewMemberViewSet(viewsets.ModelViewSet):
@@ -198,6 +205,7 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
+    pagination_class = SmallResultSetPagination
 
     def get_queryset(self):
         queryset = self.queryset
@@ -268,6 +276,7 @@ class OrderViewSet(
 ):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    pagination_class = SmallResultSetPagination
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
