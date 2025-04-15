@@ -61,14 +61,8 @@ class RouteSerializer(serializers.ModelSerializer):
 
 
 class RouteListSerializer(RouteSerializer):
-    source = serializers.SerializerMethodField()
-    destination = serializers.SerializerMethodField()
-
-    def get_source(self, obj):
-        return obj.source.city.name
-
-    def get_destination(self, obj):
-        return obj.destination.city.name
+    source = serializers.StringRelatedField()
+    destination = serializers.StringRelatedField()
 
 
 class RouteRetrieveSerializer(RouteSerializer):
