@@ -114,6 +114,12 @@ class CrewMemberRetrieveSerializer(CrewMemberSerializer):
     role = RoleSerializer()
 
 
+class CrewMemberPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CrewMember
+        fields = ("id", "photo")
+
+
 class FlightSerializer(serializers.ModelSerializer):
     available_seats = serializers.IntegerField(read_only=True)
     route = serializers.PrimaryKeyRelatedField(
