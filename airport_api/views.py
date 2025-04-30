@@ -215,6 +215,14 @@ class AirplaneTypeViewSet(
     permission_classes = (IsAdminUserOrReadOnly,)
 
 
+@extend_schema_view(
+    create=extend_schema(summary="Create airplane"),
+    list=extend_schema(summary="List airplanes"),
+    retrieve=extend_schema(summary="Get airplane details"),
+    update=extend_schema(summary="Update airplane"),
+    partial_update=extend_schema(summary="Partially update airplane"),
+    destroy=extend_schema(summary="Delete airplane"),
+)
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all()
     serializer_class = AirplaneSerializer
@@ -244,6 +252,27 @@ class AirplaneViewSet(viewsets.ModelViewSet):
             return queryset.select_related("airplane_type")
 
         return queryset
+
+    @extend_schema(
+        summary="List airplanes",
+        description="Returns a list of airplanes with optional filter params.",
+        parameters=[
+            OpenApiParameter(
+                name="model_name",
+                type=OpenApiTypes.STR,
+                description="Filter by model name",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="airplane_type",
+                type=OpenApiTypes.STR,
+                description="Filter by airplane type",
+                required=False,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class RoleViewSet(
