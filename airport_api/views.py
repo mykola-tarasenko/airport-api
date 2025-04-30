@@ -201,6 +201,10 @@ class RouteViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
+@extend_schema_view(
+    create=extend_schema(summary="Create airplane type"),
+    list=extend_schema(summary="List airplane types"),
+)
 class AirplaneTypeViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
