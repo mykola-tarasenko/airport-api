@@ -1,4 +1,9 @@
-from drf_spectacular.utils import extend_schema_view, extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter,
+)
 from rest_framework import viewsets, mixins, status
 from django.db.models import Prefetch, Q, F, Count
 from rest_framework.decorators import action
@@ -62,7 +67,13 @@ class CityViewSet(
     pagination_class = BigResultSetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
 
-
+@extend_schema_view(
+    create=extend_schema(summary="Create airport"),
+    retrieve=extend_schema(summary="Get airport details"),
+    update=extend_schema(summary="Update airport"),
+    partial_update=extend_schema(summary="Partially update airport"),
+    destroy=extend_schema(summary="Delete airport"),
+)
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
@@ -86,6 +97,21 @@ class AirportViewSet(viewsets.ModelViewSet):
             queryset = queryset.select_related("city")
 
         return queryset
+
+    @extend_schema(
+        summary="List airports",
+        description="Returns a list of airports with optional country filter.",
+        parameters=[
+            OpenApiParameter(
+                name="country",
+                type=OpenApiTypes.STR,
+                description="Filter by country",
+                required=False
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
