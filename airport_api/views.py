@@ -486,7 +486,11 @@ class FlightViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-
+@extend_schema_view(
+    create=extend_schema(summary="Create order"),
+    list=extend_schema(summary="List orders"),
+    retrieve=extend_schema(summary="Get order details"),
+)
 class OrderViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
