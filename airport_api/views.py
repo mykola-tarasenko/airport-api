@@ -368,6 +368,13 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
+@extend_schema_view(
+    create=extend_schema(summary="Create flight"),
+    retrieve=extend_schema(summary="Get flight details"),
+    update=extend_schema(summary="Update flight"),
+    partial_update=extend_schema(summary="Partially update flight"),
+    destroy=extend_schema(summary="Delete flight"),
+)
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
@@ -402,11 +409,11 @@ class FlightViewSet(viewsets.ModelViewSet):
 
         if "source_city" in filters:
             queryset = queryset.filter(
-                route__source__city__name=filters["source_city"]
+                route__source__city__name__icontains=filters["source_city"]
             )
         if "destination_city" in filters:
             queryset = queryset.filter(
-                route__destination__city__name=filters["destination_city"]
+                route__destination__city__name__icontains=filters["destination_city"]
             )
 
         if self.action in ("list", "retrieve"):
@@ -433,6 +440,51 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightRetrieveSerializer
 
         return self.serializer_class
+
+    @extend_schema(
+        summary="List flights",
+        description="Returns a list of flights with optional filter params.",
+        parameters=[
+            OpenApiParameter(
+                name="departure_time_after",
+                type=OpenApiTypes.DATETIME,
+                description="Show flights departing after this datetime",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="departure_time_before",
+                type=OpenApiTypes.DATETIME,
+                description="Show flights departing before this datetime",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="arrival_time_after",
+                type=OpenApiTypes.DATETIME,
+                description="Show flights arriving after this datetime",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="arrival_time_before",
+                type=OpenApiTypes.DATETIME,
+                description="Show flights arriving before this datetime",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="source_city",
+                type=OpenApiTypes.STR,
+                description="Filter by name of source's city",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="destination_city",
+                type=OpenApiTypes.STR,
+                description="Filter by name of destination's city",
+                required=False,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderViewSet(
