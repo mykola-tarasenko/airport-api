@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, mixins, status
 from django.db.models import Prefetch, Q, F, Count
 from rest_framework.decorators import action
@@ -47,6 +48,10 @@ from airport_api.serializers import (
 )
 
 
+@extend_schema_view(
+    create=extend_schema(summary="Create city"),
+    list=extend_schema(summary="List cities"),
+)
 class CityViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
