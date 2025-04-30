@@ -113,7 +113,13 @@ class AirportViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-
+@extend_schema_view(
+    create=extend_schema(summary="Create route"),
+    retrieve=extend_schema(summary="Get route details"),
+    update=extend_schema(summary="Update route"),
+    partial_update=extend_schema(summary="Partially update route"),
+    destroy=extend_schema(summary="Delete route"),
+)
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
@@ -130,28 +136,28 @@ class RouteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        source_name = self.request.query_params.get("source_name")
-        if source_name:
+        source_city = self.request.query_params.get("source_city")
+        if source_city:
             queryset = queryset.filter(
-                destination__city__name__icontains=source_name
+                source__city__name__icontains=source_city
             )
 
         source_id = self.request.query_params.get("source_id")
         if source_id:
             queryset = queryset.filter(
-                destination__city__id=source_id
+                source__id=source_id
             )
 
-        destination_name = self.request.query_params.get("destination_name")
-        if destination_name:
+        destination_city = self.request.query_params.get("destination_city")
+        if destination_city:
             queryset = queryset.filter(
-                destination__city__name__icontains=destination_name
+                destination__city__name__icontains=destination_city
             )
 
         destination_id = self.request.query_params.get("destination_id")
         if destination_id:
             queryset = queryset.filter(
-                destination__city__id=destination_id
+                destination__id=destination_id
             )
 
         if self.action in ("list", "retrieve"):
@@ -160,6 +166,39 @@ class RouteViewSet(viewsets.ModelViewSet):
             )
 
         return queryset
+
+    @extend_schema(
+        summary="List routes",
+        description="Returns a list of routes with optional filter params.",
+        parameters=[
+            OpenApiParameter(
+                name="source_city",
+                type=OpenApiTypes.STR,
+                description="Filter by name of source's city.",
+                required=False
+            ),
+            OpenApiParameter(
+                name="source_id",
+                type=OpenApiTypes.INT,
+                description="Filter by id of source.",
+                required=False
+            ),
+            OpenApiParameter(
+                name="destination_city",
+                type=OpenApiTypes.STR,
+                description="Filter by name of destination's city.",
+                required=False
+            ),
+            OpenApiParameter(
+                name="destination_id",
+                type=OpenApiTypes.INT,
+                description="Filter by id of destination.",
+                required=False
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class AirplaneTypeViewSet(
