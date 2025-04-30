@@ -274,7 +274,10 @@ class AirplaneViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-
+@extend_schema_view(
+    create=extend_schema(summary="Create crew member role"),
+    list=extend_schema(summary="List crew member roles"),
+)
 class RoleViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
