@@ -1,8 +1,10 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from airport_api.tests.factories import (
     sample_city,
     sample_airport,
+    sample_route,
 )
 
 
@@ -18,3 +20,22 @@ class AirportTest(TestCase):
         self.assertEqual(
             str(airport), f"{airport.city.name} - {airport.name}"
         )
+
+
+class RouteTest(TestCase):
+    def test_unique_source_and_destination_validation(self):
+        airport = sample_airport(city=sample_city(name="Lviv"))
+        with self.assertRaises(ValidationError):
+            sample_route(source=airport, destination=airport)
+
+    def test_name_property(self):
+        route = sample_route()
+        self.assertTrue(route.name)
+        self.assertEqual(
+            route.name,
+            f"{route.source.city.name} - {route.destination.city.name}",
+        )
+
+    def test_str_method(self):
+        route = sample_route()
+        self.assertEqual(str(route), route.name)
