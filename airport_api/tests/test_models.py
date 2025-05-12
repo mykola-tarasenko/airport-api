@@ -1,3 +1,5 @@
+from tkinter.font import names
+
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -6,6 +8,7 @@ from airport_api.tests.factories import (
     sample_airport,
     sample_route,
     sample_airplane_type,
+    sample_airplane,
 )
 
 
@@ -46,3 +49,17 @@ class AirplaneTypeTest(TestCase):
     def test_str_method(self):
         airplane_type = sample_airplane_type()
         self.assertEqual(str(airplane_type), airplane_type.name)
+
+
+class AirplaneTest(TestCase):
+    def test_name_property(self):
+        airplane = sample_airplane()
+        self.assertTrue(airplane.capacity)
+        self.assertEqual(
+            airplane.capacity,
+            airplane.rows * airplane.seats_in_row,
+        )
+
+    def test_str_method(self):
+        airplane = sample_airplane()
+        self.assertEqual(str(airplane), airplane.model_name)
