@@ -2,6 +2,7 @@ from airport_api.models import (
     City,
     Airport,
     Route,
+    AirplaneType,
 )
 
 
@@ -31,3 +32,8 @@ def sample_route(as_dict=False, **params):
         "distance": params.get("distance") or 700,
     }
     return defaults if as_dict else Route.objects.create(**defaults)
+
+
+def sample_airplane_type(as_dict=False, **params):
+    defaults = {"name": params.get("name") or "Light"}
+    return defaults if as_dict else AirplaneType.objects.create(**defaults)

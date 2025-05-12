@@ -5,6 +5,7 @@ from airport_api.tests.factories import (
     sample_city,
     sample_airport,
     sample_route,
+    sample_airplane_type,
 )
 
 
@@ -39,3 +40,9 @@ class RouteTest(TestCase):
     def test_str_method(self):
         route = sample_route()
         self.assertEqual(str(route), route.name)
+
+
+class AirplaneTypeTest(TestCase):
+    def test_str_method(self):
+        airplane_type = sample_airplane_type()
+        self.assertEqual(str(airplane_type), airplane_type.name)
