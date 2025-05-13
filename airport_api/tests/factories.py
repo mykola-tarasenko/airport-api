@@ -6,6 +6,7 @@ from airport_api.models import (
     Airplane,
     Role,
     CrewMember,
+    Flight,
 )
 
 
@@ -66,3 +67,16 @@ def sample_crew_member(as_dict=False, **params):
     }
     defaults.update(params)
     return defaults if as_dict else CrewMember.objects.get_or_create(**defaults)[0]
+
+
+def sample_flight(as_dict=False, **params):
+    defaults = {
+        "flight_number": "UA1234",
+        "route": sample_route(),
+        "airplane": sample_airplane(),
+        "departure_time": "2025-5-1 18:00+00:00",
+        "arrival_time": "2025-5-1 21:00+00:00",
+        "status": 1,
+    }
+    defaults.update(params)
+    return defaults if as_dict else Flight.objects.get_or_create(**defaults)[0]

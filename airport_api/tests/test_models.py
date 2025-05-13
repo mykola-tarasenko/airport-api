@@ -9,6 +9,7 @@ from airport_api.tests.factories import (
     sample_airplane,
     sample_role,
     sample_crew_member,
+    sample_flight,
 )
 
 
@@ -86,3 +87,16 @@ class CrewMemberTest(TestCase):
             str(crew_member),
             f"{crew_member.full_name} ({crew_member.role.name})",
         )
+
+
+class FlightTest(TestCase):
+    def test_arrival_time_after_departure_time_validation(self):
+        with self.assertRaises(ValidationError):
+            sample_flight(
+                departure_time="2025-5-1 21:00+00:00",
+                arrival_time="2025-5-1 18:00+00:00",
+            )
+
+    def test_str_method(self):
+        flight = sample_flight()
+        self.assertEqual(str(flight), f"Flight {flight.flight_number}")
