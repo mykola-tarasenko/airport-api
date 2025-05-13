@@ -1,5 +1,3 @@
-from tkinter.font import names
-
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -10,6 +8,7 @@ from airport_api.tests.factories import (
     sample_airplane_type,
     sample_airplane,
     sample_role,
+    sample_crew_member,
 )
 
 
@@ -70,3 +69,20 @@ class RoleTest(TestCase):
     def test_str_method(self):
         role = sample_role()
         self.assertEqual(str(role), role.name)
+
+
+class CrewMemberTest(TestCase):
+    def test_name_property(self):
+        crew_member = sample_crew_member()
+        self.assertTrue(crew_member.full_name)
+        self.assertEqual(
+            crew_member.full_name,
+            f"{crew_member.first_name} {crew_member.last_name}",
+        )
+
+    def test_str_method(self):
+        crew_member = sample_crew_member()
+        self.assertEqual(
+            str(crew_member),
+            f"{crew_member.full_name} ({crew_member.role.name})",
+        )
