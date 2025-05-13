@@ -9,6 +9,7 @@ from airport_api.tests.factories import (
     sample_route,
     sample_airplane_type,
     sample_airplane,
+    sample_role,
 )
 
 
@@ -63,3 +64,9 @@ class AirplaneTest(TestCase):
     def test_str_method(self):
         airplane = sample_airplane()
         self.assertEqual(str(airplane), airplane.model_name)
+
+
+class RoleTest(TestCase):
+    def test_str_method(self):
+        role = sample_role()
+        self.assertEqual(str(role), role.name)

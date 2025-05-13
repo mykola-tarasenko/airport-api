@@ -4,6 +4,7 @@ from airport_api.models import (
     Route,
     AirplaneType,
     Airplane,
+    Role,
 )
 
 
@@ -48,3 +49,8 @@ def sample_airplane(as_dict=False, **params):
         "airplane_type": params.get("airplane_type") or sample_airplane_type(),
     }
     return defaults if as_dict else Airplane.objects.create(**defaults)
+
+
+def sample_role(as_dict=False, **params):
+    defaults = {"name": params.get("name") or "Pilot"}
+    return defaults if as_dict else Role.objects.create(**defaults)
