@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+
 from airport_api.models import (
     City,
     Airport,
@@ -7,6 +9,7 @@ from airport_api.models import (
     Role,
     CrewMember,
     Flight,
+    Order,
 )
 
 
@@ -80,3 +83,13 @@ def sample_flight(as_dict=False, **params):
     }
     defaults.update(params)
     return defaults if as_dict else Flight.objects.get_or_create(**defaults)[0]
+
+
+def sample_order(user=None, as_dict=False):
+    defaults = {
+        "user": user or get_user_model().objects.create_user(
+            email="ex@ex.com",
+            password="1qazcde3",
+        ),
+    }
+    return defaults if as_dict else Order.objects.create(**defaults)

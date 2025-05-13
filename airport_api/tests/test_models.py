@@ -10,6 +10,7 @@ from airport_api.tests.factories import (
     sample_role,
     sample_crew_member,
     sample_flight,
+    sample_order,
 )
 
 
@@ -100,3 +101,9 @@ class FlightTest(TestCase):
     def test_str_method(self):
         flight = sample_flight()
         self.assertEqual(str(flight), f"Flight {flight.flight_number}")
+
+
+class OrderTest(TestCase):
+    def test_str_method(self):
+        order = sample_order()
+        self.assertEqual(str(order), f"Order: {order.created_at}")
