@@ -249,6 +249,15 @@ class Ticket(models.Model):
         related_name="tickets",
     )
 
+    class Meta:
+        constraints = (
+            UniqueConstraint(
+                fields=["flight", "row", "seat"],
+                name="unique_flight_seat"
+            ),
+        )
+        ordering = ("row", "seat")
+
     @staticmethod
     def validate_row_and_seat(airplane, row, seat, error_to_raise):
         for ticket_attr_value, ticket_attr_name, airplane_attr_name in [
