@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 
 from airport_api.models import (
@@ -10,6 +12,7 @@ from airport_api.models import (
     CrewMember,
     Flight,
     Order,
+    Ticket,
 )
 
 
@@ -86,10 +89,27 @@ def sample_flight(as_dict=False, **params):
 
 
 def sample_order(user=None, as_dict=False):
-    defaults = {
-        "user": user or get_user_model().objects.create_user(
-            email="ex@ex.com",
+    if not user:
+        user = get_user_model().objects.create_user(
+            email=f"{uuid.uuid4().hex[:8]}@example.com",
             password="1qazcde3",
-        ),
+        )
+
+    defaults = {
+        "user": user,
     }
+
     return defaults if as_dict else Order.objects.create(**defaults)
+
+
+def sample_ticket(as_dict=False, **params):
+    defaults = {
+        "row": 1,
+        "seat": 1,
+        "passenger_first_name": "Anton",
+        "passenger_last_name": "Antonenko",
+        "flight": sample_flight(),
+        "order": sample_order(),
+    }
+    defaults.update(params)
+    return defaults if as_dict else Ticket.objects.create(**defaults)

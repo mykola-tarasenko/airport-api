@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -10,7 +11,7 @@ from airport_api.tests.factories import (
     sample_role,
     sample_crew_member,
     sample_flight,
-    sample_order,
+    sample_order, sample_ticket,
 )
 
 
@@ -107,3 +108,23 @@ class OrderTest(TestCase):
     def test_str_method(self):
         order = sample_order()
         self.assertEqual(str(order), f"Order: {order.created_at}")
+
+
+class TicketTest(TestCase):
+    def test_unique_row_and_seat_validation(self):
+        sample_ticket()
+        with self.assertRaises(ValidationError):
+            sample_ticket()
+
+    def test_row_and_seat_in_available_range(self):
+        with self.assertRaises(ValidationError):
+            sample_ticket(row=11)
+        with self.assertRaises(ValidationError):
+            sample_ticket(seat=11)
+
+    def test_str_method(self):
+        ticket = sample_ticket()
+        self.assertEqual(
+            str(ticket),
+            f"{ticket.flight} (row: {ticket.row}, seat: {ticket.seat})",
+        )
