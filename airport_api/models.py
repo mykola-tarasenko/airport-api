@@ -1,6 +1,5 @@
 import pathlib
 import uuid
-from dataclasses import field
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -24,9 +23,7 @@ class City(models.Model):
                 name="unique_city",
             ),
         )
-        indexes = [
-            models.Index(fields=["name", "country"])
-        ]
+        ordering = ("country", "name")
 
     def __str__(self):
         return self.name
@@ -42,9 +39,6 @@ class Airport(models.Model):
 
     class Meta:
         ordering = ("city__country", "city__name", "name")
-        indexes = [
-            models.Index(fields=["name"])
-        ]
 
     def __str__(self):
         return f"{self.city.name} - {self.name}"
@@ -70,7 +64,7 @@ class Route(models.Model):
                 name="unique_route",
             ),
         )
-        ordering = ("source", "destination")
+        ordering = ("source__city__name", "destination__city__name")
 
     @staticmethod
     def validate_source_and_destination(
