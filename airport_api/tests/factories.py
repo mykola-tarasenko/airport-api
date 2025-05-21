@@ -31,7 +31,10 @@ def sample_airport(as_dict=False, **params):
         "city": sample_city(),
     }
     defaults.update(params)
-    return defaults if as_dict else Airport.objects.get_or_create(**defaults)[0]
+    if as_dict:
+        defaults["city"] = defaults["city"].id
+        return defaults
+    return Airport.objects.get_or_create(**defaults)[0]
 
 
 def sample_route(as_dict=False, **params):
