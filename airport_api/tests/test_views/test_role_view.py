@@ -19,7 +19,7 @@ class AdminRoleAPITest(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-        self.role_1 = sample_role()
+        self.role_1 = sample_role(name="Mechanic")
         self.role_2 = sample_role(name="Steward")
 
     def test_role_list(self):
@@ -31,7 +31,7 @@ class AdminRoleAPITest(TestCase):
         self.assertEqual(response.data["results"], serializer.data)
 
     def test_role_create(self):
-        payload = sample_role(name="Mechanic", as_dict=True)
+        payload = sample_role(as_dict=True)
         response = self.client.post(ROLE_URL, payload)
         role = Role.objects.get(id=response.data["id"])
 

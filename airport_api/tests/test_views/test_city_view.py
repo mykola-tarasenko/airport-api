@@ -19,7 +19,7 @@ class AdminCityAPITest(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-        self.city_1 = sample_city()
+        self.city_1 = sample_city(name="Lviv")
         self.city_2 = sample_city(name="Kyiv")
 
     def test_city_list(self):
@@ -31,7 +31,7 @@ class AdminCityAPITest(TestCase):
         self.assertEqual(response.data["results"], serializer.data)
 
     def test_city_create(self):
-        payload = sample_city(name="Lviv", as_dict=True)
+        payload = sample_city(as_dict=True)
         response = self.client.post(CITY_URL, payload)
         city = City.objects.get(id=response.data["id"])
 

@@ -19,7 +19,7 @@ class AdminAirplaneTypeAPITest(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-        self.airplane_type_1 = sample_airplane_type()
+        self.airplane_type_1 = sample_airplane_type(name="Mid")
         self.airplane_type_2 = sample_airplane_type(name="Heavy")
 
     def test_airplane_type_list(self):
@@ -31,7 +31,7 @@ class AdminAirplaneTypeAPITest(TestCase):
         self.assertEqual(response.data["results"], serializer.data)
 
     def test_airplane_type_create(self):
-        payload = sample_airplane_type(name="Mid", as_dict=True)
+        payload = sample_airplane_type(as_dict=True)
         response = self.client.post(AIRPLANE_TYPE_URL, payload)
         airplane = AirplaneType.objects.get(id=response.data["id"])
 
