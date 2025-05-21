@@ -64,7 +64,10 @@ def sample_airplane(as_dict=False, **params):
         "airplane_type": sample_airplane_type(),
     }
     defaults.update(params)
-    return defaults if as_dict else Airplane.objects.get_or_create(**defaults)[0]
+    if as_dict:
+        defaults["airplane_type"] = defaults["airplane_type"].id
+        return defaults
+    return Airplane.objects.get_or_create(**defaults)[0]
 
 
 def sample_role(as_dict=False, **params):
