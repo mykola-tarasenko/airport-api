@@ -82,7 +82,10 @@ def sample_crew_member(as_dict=False, **params):
         "role": sample_role(),
     }
     defaults.update(params)
-    return defaults if as_dict else CrewMember.objects.get_or_create(**defaults)[0]
+    if as_dict:
+        defaults["role"] = defaults["role"].id
+        return defaults
+    return CrewMember.objects.get_or_create(**defaults)[0]
 
 
 def sample_flight(as_dict=False, **params):
