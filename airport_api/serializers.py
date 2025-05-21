@@ -52,11 +52,12 @@ class RouteSerializer(serializers.ModelSerializer):
         fields = ("id", "source", "destination", "distance")
 
     def validate(self, attrs):
-        Route.validate_source_and_destination(
-            attrs["source"],
-            attrs["destination"],
-            serializers.ValidationError,
-        )
+        if attrs.get("source") and attrs.get("destination"):
+            Route.validate_source_and_destination(
+                attrs["source"],
+                attrs["destination"],
+                serializers.ValidationError,
+            )
         return attrs
 
 

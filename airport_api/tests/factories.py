@@ -44,7 +44,11 @@ def sample_route(as_dict=False, **params):
         "distance": 700,
     }
     defaults.update(params)
-    return defaults if as_dict else Route.objects.get_or_create(**defaults)[0]
+    if as_dict:
+        defaults["source"] = defaults["source"].id
+        defaults["destination"] = defaults["destination"].id
+        return defaults
+    return Route.objects.get_or_create(**defaults)[0]
 
 
 def sample_airplane_type(as_dict=False, **params):
