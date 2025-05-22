@@ -131,4 +131,8 @@ def sample_ticket(as_dict=False, **params):
         "order": sample_order(),
     }
     defaults.update(params)
-    return defaults if as_dict else Ticket.objects.create(**defaults)
+    if as_dict:
+        defaults["flight"] = defaults["flight"].id
+        defaults["order"] = defaults["order"].id
+        return defaults
+    return Ticket.objects.create(**defaults)
