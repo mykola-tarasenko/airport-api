@@ -1,6 +1,7 @@
 import uuid
 
 from django.contrib.auth import get_user_model
+from django.views.debug import default_urlconf
 
 from airport_api.models import (
     City,
@@ -14,6 +15,7 @@ from airport_api.models import (
     Order,
     Ticket,
 )
+from airport_api.urls import router
 
 
 def sample_city(as_dict=False, **params):
@@ -98,7 +100,11 @@ def sample_flight(as_dict=False, **params):
         "status": 1,
     }
     defaults.update(params)
-    return defaults if as_dict else Flight.objects.get_or_create(**defaults)[0]
+    if as_dict:
+        defaults["route"] = defaults["route"].id
+        defaults["airplane"] = defaults["airplane"].id
+        return defaults
+    return Flight.objects.get_or_create(**defaults)[0]
 
 
 def sample_order(user=None, as_dict=False):
