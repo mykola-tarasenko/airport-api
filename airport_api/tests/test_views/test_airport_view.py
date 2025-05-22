@@ -42,8 +42,10 @@ class AdminAirportAPITest(TestCase):
         self.assertEqual(response.data["results"], serializer.data)
 
     def test_filter_airports_by_country(self):
-        response = self.client.get(AIRPORT_URL,
-                                   {"country": f"{self.uk_city.country}"})
+        response = self.client.get(
+            AIRPORT_URL,
+            {"country": f"{self.uk_city.country}"},
+        )
         uk_serializer = AirportListSerializer(self.uk_airport)
         usa_serializer = AirportListSerializer(self.usa_airport)
 

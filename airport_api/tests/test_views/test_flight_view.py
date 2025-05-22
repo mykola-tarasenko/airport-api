@@ -66,25 +66,29 @@ class AdminFlightAPITest(TestCase):
             arrival_time="2025-5-3 16:00+00:00",
         )
 
-        self.expected_data_1 = FlightListSerializer(Flight.objects.annotate(
-            available_seats=(
-                F("airplane__seats_in_row") * F("airplane__rows")
-                - Count("tickets")
-            )
-        ).get(pk=self.flight_1.id)).data
-        self.expected_data_2 = FlightListSerializer(Flight.objects.annotate(
-            available_seats=(
+        self.expected_data_1 = FlightListSerializer(
+            Flight.objects.annotate(
+                available_seats=(
                     F("airplane__seats_in_row") * F("airplane__rows")
                     - Count("tickets")
-            )
-        ).get(pk=self.flight_2.id)).data
+                )
+            ).get(pk=self.flight_1.id)
+        ).data
+        self.expected_data_2 = FlightListSerializer(
+            Flight.objects.annotate(
+                available_seats=(
+                    F("airplane__seats_in_row") * F("airplane__rows")
+                    - Count("tickets")
+                )
+            ).get(pk=self.flight_2.id)
+        ).data
 
     def test_flight_list(self):
         response = self.client.get(FLIGHT_URL)
         flights = Flight.objects.annotate(
             available_seats=(
-                    F("airplane__seats_in_row") * F("airplane__rows")
-                    - Count("tickets")
+                F("airplane__seats_in_row") * F("airplane__rows")
+                - Count("tickets")
             )
         )
         serializer = FlightListSerializer(flights, many=True)
@@ -157,8 +161,8 @@ class AdminFlightAPITest(TestCase):
         response = self.client.post(FLIGHT_URL, payload)
         flight = Flight.objects.annotate(
             available_seats=(
-                    F("airplane__seats_in_row") * F("airplane__rows")
-                    - Count("tickets")
+                F("airplane__seats_in_row") * F("airplane__rows")
+                - Count("tickets")
             )
         ).get(pk=response.data["id"])
 

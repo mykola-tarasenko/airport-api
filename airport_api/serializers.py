@@ -92,7 +92,14 @@ class AirplaneRetrieveSerializer(AirplaneSerializer):
 
     class Meta:
         model = Airplane
-        fields = ("id", "model_name", "airplane_type", "capacity", "rows", "seats_in_row")
+        fields = (
+            "id",
+            "model_name",
+            "airplane_type",
+            "capacity",
+            "rows",
+            "seats_in_row",
+        )
 
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -244,16 +251,15 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ("id","created_at", "tickets")
+        fields = ("id", "created_at", "tickets")
 
     def create(self, validated_data):
         with transaction.atomic():
             tickets_data = validated_data.pop("tickets", None)
             order = Order.objects.create(**validated_data)
-            Ticket.objects.bulk_create([
-                Ticket(order=order, **ticket)
-                for ticket in tickets_data
-            ])
+            Ticket.objects.bulk_create(
+                [Ticket(order=order, **ticket) for ticket in tickets_data]
+            )
             return order
 
 

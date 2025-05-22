@@ -68,9 +68,9 @@ class Route(models.Model):
 
     @staticmethod
     def validate_source_and_destination(
-            source,
-            destination,
-            error_to_raise,
+        source,
+        destination,
+        error_to_raise,
     ):
         if source == destination:
             raise error_to_raise("The source can`t equal destination.")
@@ -146,10 +146,7 @@ def crew_member_image_path(instance, filename):
 class CrewMember(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    photo = models.ImageField(
-        null=True,
-        upload_to=crew_member_image_path
-    )
+    photo = models.ImageField(null=True, upload_to=crew_member_image_path)
     role = models.ForeignKey(
         Role,
         on_delete=models.CASCADE,
@@ -247,7 +244,7 @@ class Ticket(models.Model):
         constraints = (
             UniqueConstraint(
                 fields=["flight", "row", "seat"],
-                name="unique_flight_seat"
+                name="unique_flight_seat",
             ),
         )
         ordering = ("row", "seat")
@@ -263,8 +260,8 @@ class Ticket(models.Model):
                 raise error_to_raise(
                     {
                         ticket_attr_name: f"{ticket_attr_name} number "
-                                          f"must be in available "
-                                          f"range: (1, {count_attrs})"
+                        f"must be in available "
+                        f"range: (1, {count_attrs})"
                     }
                 )
 

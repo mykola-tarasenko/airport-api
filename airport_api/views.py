@@ -19,7 +19,8 @@ from airport_api.models import (
     Role,
     CrewMember,
     Flight,
-    Order, Ticket,
+    Order,
+    Ticket,
 )
 from airport_api.pagination import (
     SmallResultSetPagination,
@@ -67,6 +68,7 @@ class CityViewSet(
     pagination_class = BigResultSetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
 
+
 @extend_schema_view(
     create=extend_schema(summary="Create airport"),
     retrieve=extend_schema(summary="Get airport details"),
@@ -106,12 +108,13 @@ class AirportViewSet(viewsets.ModelViewSet):
                 name="country",
                 type=OpenApiTypes.STR,
                 description="Filter by country",
-                required=False
+                required=False,
             )
-        ]
+        ],
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
 
 @extend_schema_view(
     create=extend_schema(summary="Create route"),
@@ -138,15 +141,11 @@ class RouteViewSet(viewsets.ModelViewSet):
 
         source_city = self.request.query_params.get("source_city")
         if source_city:
-            queryset = queryset.filter(
-                source__city__name__icontains=source_city
-            )
+            queryset = queryset.filter(source__city__name__icontains=source_city)
 
         source_id = self.request.query_params.get("source_id")
         if source_id:
-            queryset = queryset.filter(
-                source__id=source_id
-            )
+            queryset = queryset.filter(source__id=source_id)
 
         destination_city = self.request.query_params.get("destination_city")
         if destination_city:
@@ -156,14 +155,10 @@ class RouteViewSet(viewsets.ModelViewSet):
 
         destination_id = self.request.query_params.get("destination_id")
         if destination_id:
-            queryset = queryset.filter(
-                destination__id=destination_id
-            )
+            queryset = queryset.filter(destination__id=destination_id)
 
         if self.action in ("list", "retrieve"):
-            queryset = queryset.select_related(
-                "source__city", "destination__city"
-            )
+            queryset = queryset.select_related("source__city", "destination__city")
 
         return queryset
 
@@ -175,27 +170,27 @@ class RouteViewSet(viewsets.ModelViewSet):
                 name="source_city",
                 type=OpenApiTypes.STR,
                 description="Filter by name of source's city.",
-                required=False
+                required=False,
             ),
             OpenApiParameter(
                 name="source_id",
                 type=OpenApiTypes.INT,
                 description="Filter by id of source.",
-                required=False
+                required=False,
             ),
             OpenApiParameter(
                 name="destination_city",
                 type=OpenApiTypes.STR,
                 description="Filter by name of destination's city.",
-                required=False
+                required=False,
             ),
             OpenApiParameter(
                 name="destination_id",
                 type=OpenApiTypes.INT,
                 description="Filter by id of destination.",
-                required=False
+                required=False,
             ),
-        ]
+        ],
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -244,9 +239,7 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 
         airplane_type = self.request.query_params.get("airplane_type")
         if airplane_type:
-            queryset = queryset.filter(
-                airplane_type__name__icontains=airplane_type
-            )
+            queryset = queryset.filter(airplane_type__name__icontains=airplane_type)
 
         if self.action in ("list", "retrieve"):
             return queryset.select_related("airplane_type")
@@ -269,7 +262,7 @@ class AirplaneViewSet(viewsets.ModelViewSet):
                 description="Filter by airplane type",
                 required=False,
             ),
-        ]
+        ],
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -362,7 +355,7 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
                 description="Filter by name",
                 required=False,
             ),
-        ]
+        ],
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -384,9 +377,7 @@ class FlightViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        filter_serializer = FlightFilterSerializer(
-            data=self.request.query_params
-        )
+        filter_serializer = FlightFilterSerializer(data=self.request.query_params)
         filter_serializer.is_valid(raise_exception=True)
         filters = filter_serializer.validated_data
 
@@ -417,19 +408,20 @@ class FlightViewSet(viewsets.ModelViewSet):
             )
 
         if self.action in ("list", "retrieve"):
-            queryset = (queryset
-            .select_related(
-                "route__destination__city",
-                "route__source__city",
-                "airplane",
-            )
-            .prefetch_related("crew__role")
-            .annotate(
-                available_seats=(
+            queryset = (
+                queryset.select_related(
+                    "route__destination__city",
+                    "route__source__city",
+                    "airplane",
+                )
+                .prefetch_related("crew__role")
+                .annotate(
+                    available_seats=(
                         F("airplane__seats_in_row") * F("airplane__rows")
                         - Count("tickets")
+                    )
                 )
-            ))
+            )
 
         return queryset
 
@@ -481,10 +473,11 @@ class FlightViewSet(viewsets.ModelViewSet):
                 description="Filter by name of destination's city",
                 required=False,
             ),
-        ]
+        ],
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
 
 @extend_schema_view(
     create=extend_schema(summary="Create order"),
@@ -522,9 +515,11 @@ class OrderViewSet(
                 "flight__route__destination__city",
             )
 
-            queryset = queryset.prefetch_related(Prefetch(
-                "tickets",
-                queryset=tickets_qs,
-            ))
+            queryset = queryset.prefetch_related(
+                Prefetch(
+                    "tickets",
+                    queryset=tickets_qs,
+                )
+            )
 
         return queryset

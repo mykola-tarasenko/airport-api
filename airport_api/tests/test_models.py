@@ -11,13 +11,14 @@ from airport_api.tests.factories import (
     sample_role,
     sample_crew_member,
     sample_flight,
-    sample_order, sample_ticket,
+    sample_order,
+    sample_ticket,
 )
 
 
 class CityTest(TestCase):
     def test_str_method(self):
-        city =  sample_city()
+        city = sample_city()
         self.assertEqual(str(city), city.name)
 
 
@@ -25,7 +26,8 @@ class AirportTest(TestCase):
     def test_str_method(self):
         airport = sample_airport()
         self.assertEqual(
-            str(airport), f"{airport.city.name} - {airport.name}"
+            str(airport),
+            f"{airport.city.name} - {airport.name}",
         )
 
 
