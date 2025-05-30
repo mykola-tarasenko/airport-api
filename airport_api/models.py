@@ -1,6 +1,7 @@
 import pathlib
 import uuid
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -8,7 +9,6 @@ from django.db.models import UniqueConstraint
 from django.utils.text import slugify
 
 from airport_api.validators import validate_flight_number_format
-from core import settings
 
 
 class City(models.Model):
@@ -212,7 +212,7 @@ class Flight(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         on_delete=models.CASCADE,
         related_name="orders",
     )

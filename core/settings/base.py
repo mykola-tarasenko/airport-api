@@ -9,21 +9,21 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from datetime import timedelta
 from pathlib import Path
 
 from django.conf.global_settings import AUTH_USER_MODEL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-%%%ar%qb+yiw^npt99coy#h%(8x*-fu6w%=kk$+nyo-_)7o(*9"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-%%%ar%qb+yiw^npt99coy#h%(8x*-fu6w%=kk$+nyo-_)7o(*9")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
