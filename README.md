@@ -8,8 +8,10 @@ A Django REST Framework-based API for managing airport operations including tick
 
 ## Features
 
-- Manage cities, airports, routes, flights, roles, crew members, tickets and orders
+- Managing and filtering cities, airports, routes, flights, roles, crew members, tickets and orders
 - JWT-based authentication
+- Admin panel /admin/
+- Documentation at /api/doc/swagger/
 - PostgreSQL database
 - Dockerized for easy setup
 
